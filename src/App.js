@@ -3,16 +3,55 @@ import { motion } from "framer-motion";
 import "./App.css";
 import ListItem from "./ListItem";
 import ReactLoading from "react-loading";
+import * as firebase from 'firebase'
+
 
 function App() {
+
+  // some local states 💀☢️
   const [Input, setInput] = useState("");
+  const [IncomingData, setIncomingData] = useState({});
+  const [isLoading, setisLoading] = useState(true);
+
+
+  //delte function to delete the todos ❎
+  const deleteData = (id) => {
+    const rootRef = firebase.database().ref('todoapp-framermotion').child(id)
+    rootRef.remove()
+    setisLoading(true)
+  }
+
+
+  // add function to add todos to the firesbase ➕
+  const addData = (event) => {
+    event.preventDefault();
+    setisLoading(true)
+    // add value to the database 
+    const rootRef = firebase.database().ref('todoapp-framermotion')
+    rootRef.push(Input)
+    // set incoming variable to the response we get from firebase
+    rootRef.on('value', (snapShot) => {
+      setIncomingData(snapShot.val())
+      setisLoading(false)
+    })
+    setInput("");
+  };
 
   useEffect(() => {
-    console.log("i am the use effect function ");
-  }, []);
+    // make instance of firebase 🥃
+    const rootRef = firebase.database().ref('todoapp-framermotion')
+    rootRef.on('value', (snapShot) => {
+      setIncomingData(snapShot.val())
+      setisLoading(false)
+    })
+    if(Object.keys(IncomingData).length != 0){
+      setisLoading(false)
+    }
+  },[isLoading]);
 
   return (
     <div className="app">
+      {/* Header of the app ☘️ */}
       <div className="container-fluid  d-flex flex-column">
         <div className="row">
           <div className="col d-flex justify-content-center">
@@ -41,6 +80,7 @@ function App() {
                   color: "black",
                 }}
                 disabled={!Input}
+                onClick={(event) => addData(event)}
               >
                 Add
               </button>
@@ -48,22 +88,24 @@ function App() {
           </div>
         </div>
         {/* list of todo 🚀 */}
-        <div>
-          <ListItem />
-          <ListItem />
-          <ListItem />
-          <ListItem />
-        </div>
-        {/* a beautiful loading component ❤️ 🎵 */}
-        <div className="d-flex justify-content-center">
-          <ReactLoading
-            type={"bubbles"}
-            color={"#ffffff"}
-            delay={500}
-            height={"10%"}
-            width={"10%"}
-          />
-        </div>
+        {isLoading === false ? (
+          <div>
+            {Object.entries(IncomingData).map( ([key, todo]) => (
+              <ListItem todo={todo} key={key} id={key} deleteTodo={deleteData}/>
+            ))}
+          </div>
+        ) : (
+          <div className="d-flex justify-content-center">
+            {/* a beautiful loading component ❤️ 🎵 */}
+            <ReactLoading
+              type={"bubbles"}
+              color={"#ffffff"}
+              delay={500}
+              height={"10%"}
+              width={"10%"}
+            />
+          </div>
+        )}
       </div>
     </div>
   );

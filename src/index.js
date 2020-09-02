@@ -7,6 +7,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import * as firebase from 'firebase'
+
+ // Your web app's Firebase configuration
+ var firebaseConfig = {
+  apiKey: "AIzaSyBAzs-QImn7g8_AFSm8-4NJx5buHWBRxvM",
+  authDomain: "todoapp-framermotion.firebaseapp.com",
+  databaseURL: "https://todoapp-framermotion.firebaseio.com",
+  projectId: "todoapp-framermotion",
+  storageBucket: "todoapp-framermotion.appspot.com",
+  messagingSenderId: "888896775080",
+  appId: "1:888896775080:web:8a50f5798b27d94730739d"
+};
+firebase.initializeApp(firebaseConfig)
 
 
 ReactDOM.render(

@@ -1,7 +1,7 @@
 import React from "react";
 import "./ListItem.css";
 
-function ListItem() {
+function ListItem({ todo, id, deleteTodo }) {
   return (
     <div className="container-fluid d-flex justify-content-center mt-3">
       <div
@@ -11,14 +11,18 @@ function ListItem() {
         <p
           className="Merriweather text-light m-0 p-0"
           style={{ userSelect: "none", fontSize: 21 }}
+          
         >
-          This is list item
+          {todo}
         </p>
         <div className="ml-4 mt-1">
           <i
-            class="fa fa-minus"
+            className="fa fa-minus"
+            id={id}
             style={{ cursor: "pointer" }}
-            onClick={(event) => console.log({ event })}
+            onClick={(event) => {
+              deleteTodo(event.target.id)
+            }}
           ></i>
         </div>
       </div>
